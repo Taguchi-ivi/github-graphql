@@ -44,3 +44,26 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+<!--
+component => 大文字スタート
+function Example() {
+    return <h1>hello component</h1>;
+}
+const Example = () => {
+    return (
+        <div>
+            <h1>hello component</h1>;
+        </div>
+    )
+}
+const Example = () => (
+    <div>
+        <h1>hello component</h1>;
+    </div>
+)
+
+const Example = () => { <h1>hello component</h1>; }
+
+-->
