@@ -3,6 +3,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react'
+import { MyList } from './components/List'
 
 // let content;
 // if (flg) {
@@ -56,6 +57,7 @@ function App() {
       <button onClick={handleClick}>
         clicked {count} times
       </button>
+      <MyList />
     </div>
   );
 }
