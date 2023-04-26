@@ -4,6 +4,9 @@
 import './App.css';
 import { useState } from 'react'
 import { MyList } from './components/List'
+import Expression from './components/Expression'
+import Child from './components/Child';
+import Container from './components/Container'
 
 // let content;
 // if (flg) {
@@ -33,6 +36,13 @@ function App() {
     setCount(count + 1);
   }
 
+  const hello = (arg: string):string => `${arg} Function`
+
+  const o = {
+    color: "red",
+    num: 123
+  }
+
   return (
     // <div className="App">
     //   <header className="App-header">
@@ -58,6 +68,22 @@ function App() {
         clicked {count} times
       </button>
       <MyList />
+      <Expression />
+      {/* <Child color="red" /> */}
+      <Child
+        {...o}
+        fn={hello}
+        obj={{ name: 'taguchi', age: 20 }}
+      />
+
+      {/* 開始タグと閉じタグ内のものをchildrenとすることができる */}
+      <Container title="hello">
+        <Child
+          {...o}
+          fn={hello}
+          obj={{ name: 'taguchi', age: 20 }}
+        />
+      </Container>
     </div>
   );
 }

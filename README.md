@@ -63,7 +63,9 @@ const Example = () => (
         <h1>hello component</h1>;
     </div>
 )
-
 const Example = () => { <h1>hello component</h1>; }
 
+式：何らかの値を返すもの（変数に代入できるもの）
+文：変数宣言、for文、if文(三項演算子は式、値を返すから)、switchぶんやセミコロンで区切るもの
+文はjsx内(returnの中)に記載できない
 -->
