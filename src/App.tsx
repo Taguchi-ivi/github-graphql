@@ -3,7 +3,7 @@
 // import logo from './logo.svg';
 import './App.css';
 import { ChakraProvider } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MyList } from './components/List'
 import Expression from './components/Expression'
 import Child from './components/Child';
@@ -86,6 +86,15 @@ function App() {
 
   const animals = ["dog", "cat", "mouse"]
   const [filterVal, setFilterVal] = useState("")
+
+  const [time, setTime] = useState(0);
+
+  // 再レンダリングされない、一度だけ
+  useEffect(() => {
+    window.setInterval(() => {
+      setTime(prev => prev + 1);
+    }, 1000);
+  }, [])
 
   return (
     // <div className="App">
@@ -186,6 +195,10 @@ function App() {
           <MyTodo />
         </ChakraProvider>
       </div>
+      <h3>
+        <time>{time}</time>
+        <span>秒経過</span>
+      </h3>
     </div>
   );
 }
