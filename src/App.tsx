@@ -2,6 +2,7 @@
 // import React from 'react';
 // import logo from './logo.svg';
 import './App.css';
+import { ChakraProvider } from '@chakra-ui/react'
 import { useState } from 'react'
 import { MyList } from './components/List'
 import Expression from './components/Expression'
@@ -181,7 +182,9 @@ function App() {
         }
       </ul>
       <div>
-        <MyTodo />
+        <ChakraProvider>
+          <MyTodo />
+        </ChakraProvider>
       </div>
     </div>
   );
