@@ -6,7 +6,8 @@ import { useState } from 'react'
 import { MyList } from './components/List'
 import Expression from './components/Expression'
 import Child from './components/Child';
-import Container from './components/Container'
+import Container from './components/Container';
+import MyTodo from './components/MyTodo'
 
 // let content;
 // if (flg) {
@@ -28,9 +29,9 @@ function App() {
     { title: 'Apple', id: 3 },
   ];
 
-  const listItems = products.map(product =>
-    <li key={product.id}>{product.title}</li>
-  );
+  // const listItems = products.map(product =>
+  //   <li key={product.id}>{product.title}</li>
+  // );
 
   function handleClick() {
     setCount(count + 1);
@@ -82,6 +83,9 @@ function App() {
     }
   }
 
+  const animals = ["dog", "cat", "mouse"]
+  const [filterVal, setFilterVal] = useState("")
+
   return (
     // <div className="App">
     //   <header className="App-header">
@@ -102,7 +106,7 @@ function App() {
     <div>
       <h1 className='App-doda'>my name is taguchi <span className='App-blue'>{ user }</span></h1>
       {flg ? <p>content True</p> : <p>content False</p>}
-      <ul>{listItems}</ul>
+      {/* <ul>{listItems}</ul> */}
       <button onClick={handleClick}>
         clicked {count} times
       </button>
@@ -152,6 +156,33 @@ function App() {
         {nums}
       </h1>
       <button onClick={shuffle}>shuffle</button>
+      {/* for文はJSX内に記載できないが,mapなどの式は記載できる */}
+      <ul>
+        {products.map(product =><li key={product.id}>{product.title}</li>)}
+      </ul>
+
+      <input type="text" value={filterVal} onChange={(e) => setFilterVal(e.target.value)}/>
+      <ul>
+      {/* // .map((animal) => <li key={animal}>{animal}</li>) */}
+        {animals
+          .filter(animal => animal.indexOf(filterVal) !== -1)
+          .map((animal) => {
+            // 真偽値は画面に表示されない
+            return <li key={animal}>{animal === "dog" && "★"}</li>
+            // 三項演算子
+            // return <li key={animal}>{animal === "dog" ? animal + "★" : animal}</li>
+            // if文
+            // if(animal === "dog") {
+            //   return <li key={animal}>{animal}★</li>
+            // } else {
+            //   return <li key={animal}>{animal}</li>
+            // }
+          })
+        }
+      </ul>
+      <div>
+        <MyTodo />
+      </div>
     </div>
   );
 }
