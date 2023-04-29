@@ -9,7 +9,6 @@ import Expression from './components/Expression'
 import Child from './components/Child';
 import Container from './components/Container';
 import MyTodo from './components/MyTodo'
-
 // let content;
 // if (flg) {
 //   content = 'content True'
@@ -18,6 +17,17 @@ import MyTodo from './components/MyTodo'
 // }
 const user = "Hello"
 let flg = true;
+
+// クラスの型定義
+class User {
+  public name: string = 'Taro';
+  public age: number = 18;
+
+  constructor(name: string, age: number) {
+      this.name = name;
+      this.age = age;
+  }
+}
 
 
 
@@ -95,6 +105,81 @@ function App() {
       setTime(prev => prev + 1);
     }, 1000);
   }, [])
+
+  // 型定義
+  const array1: number[] = [1, 2, 3]
+  const array2: string[] = ["a", "b", "c"]
+  const array3: Array<number> = [1, 2, 3]
+  const array4: (string | number)[] = ["a", 1, "b"]
+  const array5: Array<string | number> = ["a", 1, "b"]
+
+  // ?をつけることで、値があってもなくても許可される
+  type Person = {name: string, age?: number}
+  const obj1: {name: string, age: number} = {name: 'taro', age: 18}
+  const obj2: Person = {name: 'taro', age: 18}
+  const obj3: Person = {name: 'taro'}
+
+  const users: Person[] = [
+    {name: 'taro', age: 18},
+    {name: 'jiro'},
+  ]
+
+  // 型推論 明らかに型がわかるものは推定してくれる機能
+  // letは型推論, constはリテラル型(その値以外許可されない)になる
+  let str: string  = 'hello'
+  let str1 = 'hello'
+  const str2 = 'hello'
+  const num1 = 123
+
+  // 型エイリアス
+  type UserName = string;
+  type UserAge = number;
+  type UserGender = "man" | "woman" | "other";
+  type UserProfile = {
+    name: UserName,
+    age: UserAge,
+    gender: UserGender
+  }
+  const userProfile: UserProfile = {
+    name: 'taro',
+    age: 18,
+    gender: 'man'
+  }
+
+  // 関数の型定義
+  function sum1(x: number, y: number): number {
+    return x + y;
+  }
+  // const sum2 = (x: number, y: number): number => {
+  //   return x + y;
+  // }
+  // アロー関数のreturnが1行の場合、省略可能
+  const sum2 = (x: number, y: number = 1): number => x + y;
+  const result1 = sum2(1);
+
+  type Sum = (x: number, y: number) => number;
+  const sum3: Sum = (x, y) => x + y;
+
+  // ジェネリクス => 型引数(type parameters)を受け取る関数を作る機能のことを指す
+  const repeatStr = (value: string, times: number): string[] => {
+    // times分のarrayを作り、その中にvalueを入れる
+    return new Array(times).fill(value);
+  }
+  const repeatNum = (value: number, times: number): number[] => {
+    return new Array(times).fill(value);
+  }
+  // repeatStr,repeatNumの書き方が冗長的になる => ジェネリクスを使う
+  // const repeat = <T>(value: T, times: number): T[] => {
+  //   return new Array(times).fill(value);
+  // }
+  // const result2 = repeat<number>(1, 3);
+  // const result2 = repeat(1, 3); // 明らかにわかるときは型推論を使える
+  // const result3 = repeat<string>("hello", 3);
+  // const result4 = repeat<boolean>(true, 3);
+  // const result5 = repeat<"bye">("bye", 3);
+  // const result3 = repeat("hello", 3);
+
+  const user1 = new User("taro", 18);
 
   return (
     // <div className="App">

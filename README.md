@@ -72,5 +72,7 @@ const Example = () => { <h1>hello component</h1>; }
 --
 プリミティブ型: 1, "str", bool, 10n, symbol(), null
 オブジェクト型: {}, []などプリミティブ型以外
+--
+type文はPascalCase => UserProfileなど
 
 -->
