@@ -4,11 +4,11 @@
 import './App.css';
 import { ChakraProvider } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
-import { MyList } from './components/List'
-import Expression from './components/Expression'
-import Child from './components/Child';
-import Container from './components/Container';
-import MyTodo from './components/MyTodo'
+import { MyList } from '../components/List'
+import Expression from '../components/Expression'
+import Child from '../components/Child';
+import Container from '../components/Container';
+import MyTodo from '../components/MyTodo'
 // let content;
 // if (flg) {
 //   content = 'content True'
