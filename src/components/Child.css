@@ -1,0 +1,9 @@
+.component {
+    padding: 1rem;
+    color: blue;
+    border: 1px solid blue;
+}
+.component.red {
+    color: red;
+    border: 1px solid red;
+}

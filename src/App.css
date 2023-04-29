@@ -36,3 +36,11 @@
     transform: rotate(360deg);
   }
 }
+
+.App-doda {
+  color: red;
+}
+
+.App-blue {
+  color: blue;
+}
