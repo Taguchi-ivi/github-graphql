@@ -5,6 +5,15 @@ import './index.css';
 import Home from './routes/Home';
 import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
+import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
+// import gql from 'graphql-tag';
+
+
+const client = new ApolloClient({
+    uri: 'https://api.github.com/graphql',
+    headers: { authorization: `Bearer ${process.env.REACT_APP_GITHUB_TOKEN}` },
+    cache: new InMemoryCache()
+})
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,7 +22,9 @@ root.render(
   <React.StrictMode>
     {/* <App /> */}
     <BrowserRouter>
-      <Home />
+      <ApolloProvider client={client}>
+        <Home />
+      </ApolloProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
