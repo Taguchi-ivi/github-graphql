@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useQuery, gql, useLazyQuery} from '@apollo/client';
 
 type Repository = {
@@ -21,11 +21,17 @@ type Repository = {
 //             }
 //         }
 //     }`
+// query SearchRepository($first: Int, $after: String, $last: Int, $before: String, $query: String!) {
 const RepositorySearchQuery = gql`
-    query SearchRepository($query: String!) {
-        search(query: $query, last: 10, type: REPOSITORY) {
+    query SearchRepository($after: String, $query: String!) {
+        search(first: 10, after: $after, query: $query, type: REPOSITORY) {
             repositoryCount
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
             edges {
+                cursor
                 node {
                     ... on Repository {
                         id,
@@ -97,14 +103,51 @@ const SearchUserQuery = gql`
 const Home: React.FC = () => {
 
     const [searchName, setSearchName] = useState("")
+    const [cursor, setCursor] = useState<string | null>(null)
     const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
+    const [results, setResults] = useState<Repository[]>([])
+    const [repoCount, setRepoCount] = useState(0)
+    // const [searchRepositories, { loading, error, data }] = useQuery(RepositorySearchQuery)
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // console.log(searchName)
-        // console.log(e)
-        searchRepositories({variables: {query: searchName}})
+        // searchRepositories({variables: {query: searchName}})
+        searchRepositories({variables: {
+                after: null,
+                query: searchName
+            }})
+            .then(({data}) => {
+                if (data) {
+                    setRepoCount(data.search.repositoryCount)
+                    const repos = data.search.edges.map((edge: any) => edge.node);
+                    setResults(repos);
+                }
+            })
     }
+
+    const loadMore = () => {
+        if (data && data.search.pageInfo.hasNextPage) {
+            // setCursor(data.search.pageInfo.endCursor)
+            searchRepositories({
+                variables: {
+                    query: searchName,
+                    cursor: data.search.pageInfo.endCursor
+                },
+            }).then(({data}) => {
+                if (data) {
+                    const repos = data.search.edges.map((edge: any) => edge.node);
+                    setResults([...results, ...repos]);
+                }
+            })
+        }
+    }
+
+    // useEffect(() => {
+    //     if(cursor) {
+    //         searchRepositories({variables: {query: searchName, after: cursor}})
+    //     }
+    // })
+
     return (
         <div>
             <h1>My first Apollo app 🚀</h1>
@@ -122,15 +165,21 @@ const Home: React.FC = () => {
             {/* <DisplayRepository q={searchRepo} /> */}
             {loading && <p>Loading...</p>}
             {error && <p>Error : {error.message}</p>}
-            {data && (
+            {results && (
                 <div>
-                    <h4>{data.search.repositoryCount}</h4>
+                    <h3>Repository Count: {repoCount}</h3>
                     <ul>
-                        {data.search.edges.map((edge: any) => (
-                            <li key={edge.node.id}>{edge.node.owner.login}/{edge.node.name},{edge.node.description}</li>
+                        {results.map((repo: any, index) => (
+                            // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
+                            <li key={index}>{repo.owner.login}/{repo.name}</li>
                         ))}
-                        {/* <li key="123">{data}</li> */}
                     </ul>
+                </div>
+            )
+            }
+            {data && data.search.pageInfo.hasNextPage && (
+                <div>
+                    <button onClick={loadMore}>show more</button>
                 </div>
             )}
         </div>

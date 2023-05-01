@@ -32,5 +32,6 @@ const Example = () => { <h1>hello component</h1>; }
 オブジェクト型: {}, []などプリミティブ型以外
 --
 type文はPascalCase => UserProfileなど
-
+--
+pagination => Relay-Style Cursor PagiNation
 -->
