@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { gql, useLazyQuery} from '@apollo/client';
 import { Helmet } from "react-helmet-async";
-import Header from '../components/Header';
+import { Link } from 'react-router-dom';
 
 type Repository = {
     id: string;
@@ -161,7 +161,6 @@ const Home: React.FC = () => {
             <Helmet>
                 <title>{componentName}</title>
             </Helmet>
-            <Header />
             <br />
             <form onSubmit={search}>
                 <h3>Form</h3>
@@ -182,7 +181,11 @@ const Home: React.FC = () => {
                     <ul>
                         {results.map((repo: any, index) => (
                             // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
-                            <li key={index}>{repo.owner.login}/{repo.name}</li>
+                            <li key={index}>
+                                <Link to={`/issues/${repo.id}`}>
+                                    {repo.owner.login}/{repo.name}
+                                </Link>
+                            </li>
                         ))}
                     </ul>
                 </div>

@@ -1,11 +1,12 @@
-import react from 'react';
+import React from 'react';
 import {gql, useQuery} from '@apollo/client';
+import { useParams } from 'react-router-dom';
 
-type Repository = {
-    name: string;
-    url: string;
-    description: string;
-}
+// type Repository = {
+//     name: string;
+//     url: string;
+//     description: string;
+// }
 
 const GET_ISSUES = gql`
     query GetIssues {
@@ -20,21 +21,18 @@ const GET_ISSUES = gql`
         }
     }`;
 
-const Issues = () => {
-    const { loading, error, data } = useQuery(GET_ISSUES);
+const Issues: React.FC = () => {
+    const params = useParams();
+    const id = params.id
+    // const { loading, error, data } = useQuery(GET_ISSUES);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>Error :{error.message}</p>;
-    const {issueCount, nodes: issues} = data.search;
+    // if (loading) return <p>Loading...</p>;
+    // if (error) return <p>Error :{error.message}</p>;
+    // const {issueCount, nodes: issues} = data.search;
     return (
         <>
-            <h2>Num of issues: {issueCount}</h2>
-            <ul>
-                { issues.map((issue: Repository) => (
-                    <li key={issue.name}>{issue.name}</li>
-                ))}
-                {/* {issues.join('\n')} */}
-            </ul>
+            {!id && (<h3>正しいURLを指定してください</h3>)}
+            {id && (<h3>これはid:{id}のページです</h3>)}
         </>
     )
 }

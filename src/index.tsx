@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-// import App from './routes/App';
-import Home from './routes/Home';
-import { BrowserRouter } from 'react-router-dom';
+import App from './routes/App';
 import reportWebVitals from './reportWebVitals';
 import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 // import gql from 'graphql-tag';
@@ -21,14 +19,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ApolloProvider client={client}>
-        <HelmetProvider>
-          {/* <App /> */}
-          <Home />
-        </HelmetProvider>
-      </ApolloProvider>
-    </BrowserRouter>
+    <ApolloProvider client={client}>
+      <HelmetProvider>
+        <App />
+      </HelmetProvider>
+    </ApolloProvider>
   </React.StrictMode>
 );
 
