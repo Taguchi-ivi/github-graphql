@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { gql, useLazyQuery} from '@apollo/client';
 import { Helmet } from "react-helmet-async";
 import { Link } from 'react-router-dom';
+import { FaGithub } from 'react-icons/fa';
 
 type Repository = {
     id: string;
@@ -42,6 +43,7 @@ const RepositorySearchQuery = gql`
                         name,
                         description,
                         url,
+                        stargazerCount,
                         owner{
                             login
                         }
@@ -163,7 +165,6 @@ const Home: React.FC = () => {
             </Helmet>
             <br />
             <form onSubmit={search}>
-                <h3>Form</h3>
                 <input
                     type="text"
                     value={searchName}
@@ -185,6 +186,9 @@ const Home: React.FC = () => {
                                 <Link to={`/issues/${repo.id}`}>
                                     {repo.owner.login}/{repo.name}
                                 </Link>
+                                <a href={repo.url} target="_blank" rel="noopener noreferrer">
+                                    <FaGithub size="1rem" />
+                                </a>
                             </li>
                         ))}
                     </ul>

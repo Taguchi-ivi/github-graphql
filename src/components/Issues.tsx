@@ -24,6 +24,7 @@ const GET_ISSUES = gql`
                             title
                             createdAt
                             url
+                            state
                         }
                     }
                     pageInfo {
