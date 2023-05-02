@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { gql, useLazyQuery} from '@apollo/client';
 import { Helmet } from "react-helmet-async";
-import Header from '../components/Header';
+import { Link } from 'react-router-dom';
+import { FaGithub } from 'react-icons/fa';
 
 type Repository = {
     id: string;
@@ -42,6 +43,7 @@ const RepositorySearchQuery = gql`
                         name,
                         description,
                         url,
+                        stargazerCount,
                         owner{
                             login
                         }
@@ -161,10 +163,8 @@ const Home: React.FC = () => {
             <Helmet>
                 <title>{componentName}</title>
             </Helmet>
-            <Header />
             <br />
             <form onSubmit={search}>
-                <h3>Form</h3>
                 <input
                     type="text"
                     value={searchName}
@@ -182,7 +182,14 @@ const Home: React.FC = () => {
                     <ul>
                         {results.map((repo: any, index) => (
                             // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
-                            <li key={index}>{repo.owner.login}/{repo.name}</li>
+                            <li key={index}>
+                                <Link to={`/issues/${repo.id}`}>
+                                    {repo.owner.login}/{repo.name}
+                                </Link>
+                                <a href={repo.url} target="_blank" rel="noopener noreferrer">
+                                    <FaGithub size="1rem" />
+                                </a>
+                            </li>
                         ))}
                     </ul>
                 </div>

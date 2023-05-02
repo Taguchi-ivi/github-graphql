@@ -8,6 +8,7 @@
 # 技術
 - React
     - react-router-dom(ページ遷移)
+    - react-icons(アイコンを表示)
     - react-helmet-async(ページごとにタブ名、タイトル名を変更)
     - chakra-ui(UIフレームワーク)
 - TypeScript
@@ -20,6 +21,7 @@
 # 追加した機能
 - 現在表示している件数を表示(view数/n)
 - ページごとにタブ名、タイトル名を変更
+- レポジトリ、issuesから別タブにて対象のGitHubページへ遷移できる
 
 <!--
 component => 大文字スタート
