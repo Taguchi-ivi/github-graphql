@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import {useQuery, gql, useLazyQuery} from '@apollo/client';
+// import React, { useState, useEffect } from 'react';
+// import {useQuery, gql, useLazyQuery} from '@apollo/client';
+import React, { useState } from 'react';
+import { gql, useLazyQuery} from '@apollo/client';
+import Header from '../components/Header';
 
 type Repository = {
     id: string;
@@ -49,18 +52,18 @@ const RepositorySearchQuery = gql`
 `
 
 // 氏名で検索
-const SearchUserQuery = gql`
-    query SearchUser($query: String!) {
-        search(query: $query, last: 10, type: USER) {
-            edges {
-                node {
-                    ... on User {
-                        login
-                    }
-                }
-            }
-        }
-    }`
+// const SearchUserQuery = gql`
+//     query SearchUser($query: String!) {
+//         search(query: $query, last: 10, type: USER) {
+//             edges {
+//                 node {
+//                     ... on User {
+//                         login
+//                     }
+//                 }
+//             }
+//         }
+//     }`
 // query {
 //     user(login: "taguchi-ivi") {
 //         name
@@ -106,7 +109,8 @@ const Home: React.FC = () => {
     const [cursor, setCursor] = useState<string | null>(null)
     const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
     const [results, setResults] = useState<Repository[]>([])
-    const [repoCount, setRepoCount] = useState(0)
+    const [repoCount, setRepoCount] = useState(-1)
+    const [firstFlg, setFirstFlg] = useState<boolean>(true)
     // const [searchRepositories, { loading, error, data }] = useQuery(RepositorySearchQuery)
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,6 +125,8 @@ const Home: React.FC = () => {
                     setRepoCount(data.search.repositoryCount)
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     setResults(repos);
+                    setFirstFlg(false);
+                    setCursor(data.search.pageInfo.endCursor)
                 }
             })
     }
@@ -131,12 +137,13 @@ const Home: React.FC = () => {
             searchRepositories({
                 variables: {
                     query: searchName,
-                    cursor: data.search.pageInfo.endCursor
+                    after: cursor
                 },
             }).then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     setResults([...results, ...repos]);
+                    setCursor(data.search.pageInfo.endCursor)
                 }
             })
         }
@@ -150,7 +157,7 @@ const Home: React.FC = () => {
 
     return (
         <div>
-            <h1>My first Apollo app 🚀</h1>
+            <Header />
             <br />
             <form onSubmit={search}>
                 <h3>Form</h3>
@@ -163,11 +170,11 @@ const Home: React.FC = () => {
             </form>
             <h2>{searchName}</h2>
             {/* <DisplayRepository q={searchRepo} /> */}
-            {loading && <p>Loading...</p>}
+            {loading && firstFlg && <p>Loading...</p>}
             {error && <p>Error : {error.message}</p>}
+            {repoCount > -1 && <h3>Repository Count: {results.length}/{repoCount}</h3>}
             {results && (
                 <div>
-                    <h3>Repository Count: {repoCount}</h3>
                     <ul>
                         {results.map((repo: any, index) => (
                             // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
@@ -177,6 +184,7 @@ const Home: React.FC = () => {
                 </div>
             )
             }
+            {loading && !firstFlg && <p>Loading...</p>}
             {data && data.search.pageInfo.hasNextPage && (
                 <div>
                     <button onClick={loadMore}>show more</button>

@@ -1,8 +1,24 @@
-# React(TypeScript) + GitHub GraphQL
+# 概要
+こちらはGitHubからレポジトリを検索するサービスです。<br />
+またレポジトリを押下しますと、付随するIssuesが見れます
+
+<br />
+<br />
+
+# 技術
+- React
+    - react-router-dom
+    - chakra-ui
+- TypeScript
+- GraphQL
+    - Apollo Client
 
 
-## 追加した機能
+<br />
+<br />
 
+# 追加した機能
+- 現在表示している件数を表示(view数/n)
 
 <!--
 component => 大文字スタート
