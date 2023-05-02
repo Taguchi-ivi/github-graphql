@@ -2,6 +2,7 @@
 // import {useQuery, gql, useLazyQuery} from '@apollo/client';
 import React, { useState } from 'react';
 import { gql, useLazyQuery} from '@apollo/client';
+import { Helmet } from "react-helmet-async";
 import Header from '../components/Header';
 
 type Repository = {
@@ -154,9 +155,12 @@ const Home: React.FC = () => {
     //         searchRepositories({variables: {query: searchName, after: cursor}})
     //     }
     // })
-
+    const componentName = "Repository Search"
     return (
         <div>
+            <Helmet>
+                <title>{componentName}</title>
+            </Helmet>
             <Header />
             <br />
             <form onSubmit={search}>

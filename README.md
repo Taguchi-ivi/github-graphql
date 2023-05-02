@@ -7,18 +7,19 @@
 
 # 技術
 - React
-    - react-router-dom
-    - chakra-ui
+    - react-router-dom(ページ遷移)
+    - react-helmet-async(ページごとにタブ名、タイトル名を変更)
+    - chakra-ui(UIフレームワーク)
 - TypeScript
 - GraphQL
     - Apollo Client
-
 
 <br />
 <br />
 
 # 追加した機能
 - 現在表示している件数を表示(view数/n)
+- ページごとにタブ名、タイトル名を変更
 
 <!--
 component => 大文字スタート

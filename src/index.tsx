@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
 import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
 // import gql from 'graphql-tag';
+import { HelmetProvider } from "react-helmet-async";
 
 
 const client = new ApolloClient({
@@ -23,7 +24,9 @@ root.render(
     {/* <App /> */}
     <BrowserRouter>
       <ApolloProvider client={client}>
-        <Home />
+        <HelmetProvider>
+          <Home />
+        </HelmetProvider>
       </ApolloProvider>
     </BrowserRouter>
   </React.StrictMode>
