@@ -2,6 +2,8 @@ import React from 'react';
 import {gql, useQuery} from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Helmet } from "react-helmet-async";
+import Loading from './Atoms/Loading'
+import { Box, Button } from '@chakra-ui/react';
 
 // type Repository = {
 //     name: string;
@@ -51,7 +53,7 @@ const Issues: React.FC = () => {
         window.history.back()
     }
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading />;
     if (error) return <p>Error :{error.message}</p>;
 
     return (
@@ -61,8 +63,8 @@ const Issues: React.FC = () => {
             </Helmet>
             {!id && (<h3>正しいURLを指定してください</h3>)}
             {data && (
-                <div>
-                    <button onClick={PageBack}>←back to search</button>
+                <Box>
+                    <Button onClick={PageBack}>←back to search</Button>
                     <span>Latest issues</span>
                     <span>on {data.node.owner.login}/{data.node.name}</span>
                     <ul>
@@ -72,7 +74,7 @@ const Issues: React.FC = () => {
                             </li>
                         ))}
                     </ul>
-                </div>
+                </Box>
             )}
         </>
     )

@@ -5,6 +5,11 @@ import { gql, useLazyQuery} from '@apollo/client';
 import { Helmet } from "react-helmet-async";
 import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
+import {
+    Box, Heading, Button, Input,
+    Card, CardBody, Stack, Flex, Divider
+} from '@chakra-ui/react';
+import Loading from './Atoms/Loading'
 
 type Repository = {
     id: string;
@@ -13,20 +18,7 @@ type Repository = {
     description: string;
     createdAt: string;
 }
-// issueの場合は作成者とリポジトリ名を入力すればissueを取得できそう
-// const GET_REPOSITORY = gql`
-//     query GetRepository($owner: String!, $name: String!) {
-//         repository(owner: $owner, name: $name) {
-//             issues(first: 10) {
-//                 edges {
-//                     node {
-//                         title
-//                     }
-//                 }
-//             }
-//         }
-//     }`
-// query SearchRepository($first: Int, $after: String, $last: Int, $before: String, $query: String!) {
+
 const RepositorySearchQuery = gql`
     query SearchRepository($after: String, $query: String!) {
         search(first: 10, after: $after, query: $query, type: REPOSITORY) {
@@ -84,28 +76,6 @@ const RepositorySearchQuery = gql`
 //     }
 //   }
 
-
-    // const DisplayRepository = (q: string) => {
-    //     const { loading, error, data } = useQuery(RepositorySearchQuery, {
-    //         variables: {
-    //             query: q
-    //         }
-    //     });
-
-    //     if (loading) return <p>Loading...</p>;
-    //     if (error) return <p>Error : {error.message}</p>;
-
-    //     return data.locations.map(({ id, name, description }: Repository) => (
-    //         <div key={id}>
-    //             <h3>{name}</h3>
-    //             <br />
-    //             <b>About this location:</b>
-    //             <p>{description}</p>
-    //             <br />
-    //         </div>
-    //     ));
-    // }
-
 const Home: React.FC = () => {
 
     const [searchName, setSearchName] = useState("")
@@ -114,15 +84,13 @@ const Home: React.FC = () => {
     const [results, setResults] = useState<Repository[]>([])
     const [repoCount, setRepoCount] = useState(-1)
     const [firstFlg, setFirstFlg] = useState<boolean>(true)
-    // const [searchRepositories, { loading, error, data }] = useQuery(RepositorySearchQuery)
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // searchRepositories({variables: {query: searchName}})
         searchRepositories({variables: {
-                after: null,
-                query: searchName
-            }})
+            after: null,
+            query: searchName
+        }})
             .then(({data}) => {
                 if (data) {
                     setRepoCount(data.search.repositoryCount)
@@ -152,56 +120,73 @@ const Home: React.FC = () => {
         }
     }
 
-    // useEffect(() => {
-    //     if(cursor) {
-    //         searchRepositories({variables: {query: searchName, after: cursor}})
-    //     }
-    // })
     const componentName = "Repository Search"
     return (
-        <div>
+        <Box w='80%' p={4} mx="auto" >
             <Helmet>
                 <title>{componentName}</title>
             </Helmet>
             <br />
-            <form onSubmit={search}>
-                <input
-                    type="text"
-                    value={searchName}
-                    onChange={(e) => setSearchName(e.target.value)}
-                />
-                <button type="submit">検索</button>
-            </form>
-            <h2>{searchName}</h2>
-            {/* <DisplayRepository q={searchRepo} /> */}
-            {loading && firstFlg && <p>Loading...</p>}
-            {error && <p>Error : {error.message}</p>}
-            {repoCount > -1 && <h3>Repository Count: {results.length}/{repoCount}</h3>}
-            {results && (
-                <div>
-                    <ul>
-                        {results.map((repo: any, index) => (
-                            // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
-                            <li key={index}>
-                                <Link to={`/issues/${repo.id}`}>
-                                    {repo.owner.login}/{repo.name}
-                                </Link>
-                                <a href={repo.url} target="_blank" rel="noopener noreferrer">
-                                    <FaGithub size="1rem" />
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )
-            }
-            {loading && !firstFlg && <p>Loading...</p>}
-            {data && data.search.pageInfo.hasNextPage && (
-                <div>
-                    <button onClick={loadMore}>show more</button>
-                </div>
-            )}
-        </div>
+            <Card>
+                <CardBody>
+                    <form onSubmit={search}>
+                        <Flex>
+                            <Input
+                                focusBorderColor='teal.500'
+                                placeholder='Search Repository'
+                                type="text"
+                                value={searchName}
+                                onChange={(e) => setSearchName(e.target.value)}
+                            />
+                            <Button type="submit" ml="2">Search</Button>
+                        </Flex>
+                    </form>
+                    {loading && firstFlg && <Loading />}
+                    {error && <p>Error : {error.message}</p>}
+                    {repoCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repoCount}</Heading></Flex>}
+                    <Stack spacing='4'>
+                        {results && (
+                            <Box my="10">
+                                {results.map((repo: any, index) => (
+                                    // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
+                                    <>
+                                        <Box key={index} p="3">
+                                            <Flex>
+                                                <Heading size='xs' mr="5">
+                                                    <Link to={`/issues/${repo.id}`}>
+                                                        {repo.owner.login}/{repo.name}
+                                                    </Link>
+                                                </Heading>
+                                                <a href={repo.url} target="_blank" rel="noopener noreferrer">
+                                                    <FaGithub size="1rem" />
+                                                </a>
+                                            </Flex>
+                                            <Link to={`/issues/${repo.id}`}>
+                                                {repo.description}
+                                            </Link>
+                                        </Box>
+                                        <Divider />
+                                    </>
+                                ))}
+                            </Box>
+                        )}
+                        {loading && !firstFlg && <Loading />}
+                        {data && data.search.pageInfo.hasNextPage && (
+                            <Box>
+                                <Button
+                                    onClick={loadMore}
+                                    loadingText='Submitting'
+                                    colorScheme='teal'
+                                    variant='outline'
+                                >
+                                    show more
+                                </Button>
+                            </Box>
+                        )}
+                    </Stack>
+                </CardBody>
+            </Card>
+        </Box>
     )
 }
 

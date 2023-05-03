@@ -4,7 +4,7 @@ import './index.css';
 import App from './routes/App';
 import reportWebVitals from './reportWebVitals';
 import {ApolloClient, InMemoryCache, ApolloProvider} from '@apollo/client';
-// import gql from 'graphql-tag';
+import { ChakraProvider } from '@chakra-ui/react'
 import { HelmetProvider } from "react-helmet-async";
 
 
@@ -21,7 +21,9 @@ root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
       <HelmetProvider>
-        <App />
+        <ChakraProvider>
+          <App />
+        </ChakraProvider>
       </HelmetProvider>
     </ApolloProvider>
   </React.StrictMode>
