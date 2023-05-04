@@ -7,9 +7,10 @@ import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
 import {
     Box, Heading, Button, Input,
-    Card, CardBody, Stack, Flex, Divider
+    Card, CardBody, Stack, Flex, Divider, Text
 } from '@chakra-ui/react';
 import Loading from './Atoms/Loading'
+import '../assets/styles/Commons.css'
 
 type Repository = {
     id: string;
@@ -145,28 +146,30 @@ const Home: React.FC = () => {
                     {error && <p>Error : {error.message}</p>}
                     {repoCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repoCount}</Heading></Flex>}
                     <Stack spacing='4'>
-                        {results && (
-                            <Box my="10">
+                        {results && results.length > 0 && (
+                            <Box my="7" className="y-scroll">
                                 {results.map((repo: any, index) => (
                                     // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
-                                    <>
-                                        <Box key={index} p="3">
+                                    <Box key={index}>
+                                        <Box p="3">
                                             <Flex>
-                                                <Heading size='xs' mr="5">
-                                                    <Link to={`/issues/${repo.id}`}>
+                                                <Link to={`/issues/${repo.id}`}>
+                                                    <Heading size='sm' mr="5">
                                                         {repo.owner.login}/{repo.name}
-                                                    </Link>
-                                                </Heading>
+                                                    </Heading>
+                                                </Link>
                                                 <a href={repo.url} target="_blank" rel="noopener noreferrer">
                                                     <FaGithub size="1rem" />
                                                 </a>
                                             </Flex>
                                             <Link to={`/issues/${repo.id}`}>
-                                                {repo.description}
+                                                <Text fontSize='xs' color="gray.400">
+                                                    {repo.description}
+                                                </Text>
                                             </Link>
                                         </Box>
                                         <Divider />
-                                    </>
+                                    </Box>
                                 ))}
                             </Box>
                         )}
@@ -174,6 +177,7 @@ const Home: React.FC = () => {
                         {data && data.search.pageInfo.hasNextPage && (
                             <Box>
                                 <Button
+                                    width='100%'
                                     onClick={loadMore}
                                     loadingText='Submitting'
                                     colorScheme='teal'

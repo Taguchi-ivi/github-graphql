@@ -1,6 +1,5 @@
 // import React from 'react';
-// import logo from './logo.svg';
-import './App.css';
+// import '../assets/styles/App.css';
 import Header from '../components/Header';
 import { router } from './AppRoutes';
 import { RouterProvider } from 'react-router-dom';
