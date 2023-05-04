@@ -1,46 +1,15 @@
 import React from 'react';
-import {gql, useQuery} from '@apollo/client';
+import { useQuery} from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Helmet } from "react-helmet-async";
-import Loading from './Atoms/Loading'
+import Loading from './Loading'
 import {
     Box, Button, Flex, Heading, Text,
     Card, CardBody, Stack, Divider
 } from '@chakra-ui/react';
 // import { FiExternalLink } from "react-icons/fi";
 import { FaGithub } from 'react-icons/fa';
-
-// type Repository = {
-//     name: string;
-//     url: string;
-//     description: string;
-// }
-
-const GET_ISSUES = gql`
-    query GetIssues($repositoryId: ID!) {
-        node(id: $repositoryId) {
-            ... on Repository {
-                name,
-                owner {
-                    login
-                }
-                issues(first: 10, after: null, orderBy: { field: CREATED_AT, direction: DESC }) {
-                    edges {
-                        node {
-                            id
-                            title
-                            url
-                        }
-                    }
-                    pageInfo {
-                        endCursor
-                        hasNextPage
-                    }
-                }
-            }
-        }
-    }
-`;
+import { GET_ISSUES } from '../query/SearchIssues';
 
 const Issues: React.FC = () => {
     const componentName = "Issues Search"

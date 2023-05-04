@@ -1,7 +1,6 @@
 import Home from '../components/Home';
-import ErrorPage from '../components/Atoms/ErrorPage';
 import Issues from '../components/Issues';
-// import { ChakraProvider } from '@chakra-ui/react'
+import ErrorPage from '../components/ErrorPage';
 import { createBrowserRouter } from 'react-router-dom';
 
 export const router = createBrowserRouter([

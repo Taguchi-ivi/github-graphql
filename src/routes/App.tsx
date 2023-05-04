@@ -1,5 +1,3 @@
-// import React from 'react';
-// import '../assets/styles/App.css';
 import Header from '../components/Header';
 import { router } from './AppRoutes';
 import { RouterProvider } from 'react-router-dom';
