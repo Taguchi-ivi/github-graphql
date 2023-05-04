@@ -1,7 +1,5 @@
-// import React, { useState, useEffect } from 'react';
-// import {useQuery, gql, useLazyQuery} from '@apollo/client';
 import React, { useState } from 'react';
-import { gql, useLazyQuery} from '@apollo/client';
+import { useLazyQuery} from '@apollo/client';
 import { Helmet } from "react-helmet-async";
 import { Link } from 'react-router-dom';
 import { FaGithub } from 'react-icons/fa';
@@ -9,8 +7,9 @@ import {
     Box, Heading, Button, Input,
     Card, CardBody, Stack, Flex, Divider, Text
 } from '@chakra-ui/react';
-import Loading from './Atoms/Loading'
+import Loading from './Loading'
 import '../assets/styles/Commons.css'
+import { RepositorySearchQuery } from '../query/SearchRepository';
 
 type Repository = {
     id: string;
@@ -19,62 +18,6 @@ type Repository = {
     description: string;
     createdAt: string;
 }
-
-const RepositorySearchQuery = gql`
-    query SearchRepository($after: String, $query: String!) {
-        search(first: 10, after: $after, query: $query, type: REPOSITORY) {
-            repositoryCount
-            pageInfo {
-                endCursor
-                hasNextPage
-            }
-            edges {
-                cursor
-                node {
-                    ... on Repository {
-                        id,
-                        name,
-                        description,
-                        url,
-                        owner{
-                            login
-                        }
-                    }
-                }
-            }
-        }
-    }
-`
-
-// 氏名で検索
-// const SearchUserQuery = gql`
-//     query SearchUser($query: String!) {
-//         search(query: $query, last: 10, type: USER) {
-//             edges {
-//                 node {
-//                     ... on User {
-//                         login
-//                     }
-//                 }
-//             }
-//         }
-//     }`
-// query {
-//     user(login: "taguchi-ivi") {
-//         name
-//         url
-//         repositories(last: 20) {
-//             totalCount
-//             nodes {
-//                 name
-//                 description
-//                 createdAt
-//                 updatedAt
-//                 url
-//             }
-//         }
-//     }
-//   }
 
 const Home: React.FC = () => {
 
@@ -104,7 +47,6 @@ const Home: React.FC = () => {
 
     const loadMore = () => {
         if (data && data.search.pageInfo.hasNextPage) {
-            // setCursor(data.search.pageInfo.endCursor)
             searchRepositories({
                 variables: {
                     query: searchName,
