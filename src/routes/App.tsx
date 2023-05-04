@@ -1,21 +1,19 @@
 // import React from 'react';
-// import logo from './logo.svg';
-import './App.css';
+// import '../assets/styles/App.css';
 import Header from '../components/Header';
 import { router } from './AppRoutes';
-// import { ChakraProvider } from '@chakra-ui/react'
-// import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { RouterProvider } from 'react-router-dom';
+import { Container } from '@chakra-ui/react';
 
 function App() {
 
   return (
-      // <ChakraProvider>
     <>
-        <Header />
+      <Header />
+      <Container maxW="container.lg" mt={8}>
         <RouterProvider router={router} />
+      </Container>
     </>
-      // </ChakraProvider>
   );
 }
 

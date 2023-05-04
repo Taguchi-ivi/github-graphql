@@ -1,0 +1,7 @@
+
+.y-scroll {
+    overflow-y: scroll;
+	margin: 50px auto 20px;
+	width: 100%;
+	height: 500px;
+}
