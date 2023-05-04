@@ -36,7 +36,6 @@ const RepositorySearchQuery = gql`
                         name,
                         description,
                         url,
-                        stargazerCount,
                         owner{
                             login
                         }

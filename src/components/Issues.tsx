@@ -29,9 +29,7 @@ const GET_ISSUES = gql`
                         node {
                             id
                             title
-                            createdAt
                             url
-                            state
                         }
                     }
                     pageInfo {
