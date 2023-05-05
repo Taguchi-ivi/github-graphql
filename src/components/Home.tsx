@@ -12,7 +12,7 @@ import '../assets/styles/Commons.css'
 import { RepositorySearchQuery } from '../query/SearchRepository';
 import { useDispatch } from "react-redux";
 import { editSearchName } from "../store/modules/searchName"
-import { editCursor } from "../store/modules/cursor"
+import { editPageInfo, resetPageInfo } from "../store/modules/pageInfo"
 import { editRepositoryCount } from '../store/modules/repositoryCount';
 import { resetSearchResult ,addSearchResult } from '../store/modules/searchResults';
 import { useSelector } from "react-redux"
@@ -20,11 +20,11 @@ import { useSelector } from "react-redux"
 
 const Home: React.FC = () => {
 
-    const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
-    const [firstFlg, setFirstFlg] = useState<boolean>(true)
+    const [searchRepositories, { loading, error }] = useLazyQuery(RepositorySearchQuery)
+    // const [firstFlg, setFirstFlg] = useState<boolean>(true)
 
     const searchName = useSelector((state: any) => state.searchName)
-    const cursor = useSelector((state: any) => state.cursor)
+    const pageInfo = useSelector((state: any) => state.pageInfo)
     const repositoryCount = useSelector((state: any) => state.repositoryCount)
     const searchResults = useSelector((state: any) => state.searchResults.value)
     const dispatch = useDispatch();
@@ -32,33 +32,33 @@ const Home: React.FC = () => {
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         dispatch(resetSearchResult())
+        dispatch(resetPageInfo())
         searchRepositories({variables: {
-            after: null,
-            query: searchName
+            query: searchName,
+            after: null
         }})
             .then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     dispatch(addSearchResult(repos))
-                    setFirstFlg(false);
                     dispatch(editRepositoryCount(data.search.repositoryCount))
-                    dispatch(editCursor(data.search.pageInfo.endCursor))
+                    dispatch(editPageInfo(data.search.pageInfo))
                 }
             })
     }
 
     const loadMore = () => {
-        if (data && data.search.pageInfo.hasNextPage) {
+        if (searchResults && pageInfo && pageInfo.hasNextPage) {
             searchRepositories({
                 variables: {
                     query: searchName,
-                    after: cursor
+                    after: pageInfo.cursor
                 },
             }).then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     dispatch(addSearchResult(repos))
-                    dispatch(editCursor(data.search.pageInfo.endCursor))
+                    dispatch(editPageInfo(data.search.pageInfo))
                 }
             })
         }
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
                             <Button type="submit" ml="2">Search</Button>
                         </Flex>
                     </form>
-                    {loading && firstFlg && <Loading />}
+                    {loading && pageInfo.firstFlg && <Loading />}
                     {error && <p>Error : {error.message}</p>}
                     {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {searchResults.length}/{repositoryCount}</Heading></Flex>}
                     <Stack spacing='4'>
@@ -116,8 +116,8 @@ const Home: React.FC = () => {
                                 ))}
                             </Box>
                         )}
-                        {loading && !firstFlg && <Loading />}
-                        {data && data.search.pageInfo.hasNextPage && (
+                        {loading && !pageInfo.firstFlg && <Loading />}
+                        {searchResults && pageInfo && pageInfo.hasNextPage && (
                             <Box>
                                 <Button
                                     width='100%'

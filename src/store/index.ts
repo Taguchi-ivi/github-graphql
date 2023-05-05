@@ -1,15 +1,17 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import searchName from "./modules/searchName";
-import cursor from "./modules/cursor";
+import pageInfo from "./modules/pageInfo";
 import repositoryCount from "./modules/repositoryCount";
 import searchResults from "./modules/searchResults";
+import searchHistory from "./modules/searchHistory";
 
 export default configureStore({
     reducer: {
-        searchName: searchName,
-        cursor: cursor,
-        repositoryCount: repositoryCount,
-        searchResults: searchResults
+        searchName,
+        pageInfo,
+        repositoryCount,
+        searchResults,
+        searchHistory
     }
 })
