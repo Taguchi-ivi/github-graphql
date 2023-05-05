@@ -3,21 +3,26 @@ import { createSlice } from "@reduxjs/toolkit";
 const searchResults = createSlice({
     name: "searchResults",
     initialState: {
-        id: '',
-        url: '',
-        name: '',
-        description: '',
-        createdAt: '',
+        searchResult: [
+            {
+                id: '',
+                url: '',
+                name: '',
+                description: '',
+                createdAt: '',
+            }
+        ]
     },
     reducers: {
-        editSearchResult(state, { payload }) {
-            return payload
+        addSearchResult(state, { payload }) {
+            // state.searchResult = [...state.searchResult, payload]
+            state.searchResult.push(payload);
         }
     }
 })
 
-const { editSearchResult } = searchResults.actions;
+const { addSearchResult } = searchResults.actions;
 
-export { editSearchResult };
+export { addSearchResult };
 export default searchResults.reducer
 

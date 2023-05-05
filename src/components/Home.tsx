@@ -12,6 +12,7 @@ import '../assets/styles/Commons.css'
 import { RepositorySearchQuery } from '../query/SearchRepository';
 import { useDispatch } from "react-redux";
 import { editSearchName } from "../store/modules/searchName"
+import { editCursor } from "../store/modules/cursor"
 import { useSelector } from "react-redux"
 
 type Repository = {
@@ -24,20 +25,21 @@ type Repository = {
 
 const Home: React.FC = () => {
 
-    const [cursor, setCursor] = useState<string | null>(null)
+    // const [cursor, setCursor] = useState<string | null>(null)
     const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
     const [results, setResults] = useState<Repository[]>([])
     const [repoCount, setRepoCount] = useState(-1)
     const [firstFlg, setFirstFlg] = useState<boolean>(true)
 
-    const state = useSelector((state: any) => state.searchName)
+    const searchName = useSelector((state: any) => state.searchName)
+    const cursor = useSelector((state: any) => state.cursor)
     const dispatch = useDispatch();
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         searchRepositories({variables: {
             after: null,
-            query: state
+            query: searchName
         }})
             .then(({data}) => {
                 if (data) {
@@ -45,7 +47,8 @@ const Home: React.FC = () => {
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     setResults(repos);
                     setFirstFlg(false);
-                    setCursor(data.search.pageInfo.endCursor)
+                    // setCursor(data.search.pageInfo.endCursor)
+                    dispatch(editCursor(data.search.pageInfo.endCursor))
                 }
             })
     }
@@ -54,14 +57,15 @@ const Home: React.FC = () => {
         if (data && data.search.pageInfo.hasNextPage) {
             searchRepositories({
                 variables: {
-                    query: state,
+                    query: searchName,
                     after: cursor
                 },
             }).then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     setResults([...results, ...repos]);
-                    setCursor(data.search.pageInfo.endCursor)
+                    // setCursor(data.search.pageInfo.endCursor)
+                    dispatch(editCursor(data.search.pageInfo.endCursor))
                 }
             })
         }
@@ -74,7 +78,7 @@ const Home: React.FC = () => {
                 <title>{componentName}</title>
             </Helmet>
             <br />
-            <Heading>{state}</Heading>
+            <Heading>{searchName}</Heading>
             <Card>
                 <CardBody>
                     <form onSubmit={search}>
@@ -83,7 +87,7 @@ const Home: React.FC = () => {
                                 focusBorderColor='teal.500'
                                 placeholder='Search Repository'
                                 type="text"
-                                value={state}
+                                value={searchName}
                                 onChange={(e) => dispatch(editSearchName(e.target.value))}
                             />
                             <Button type="submit" ml="2">Search</Button>
