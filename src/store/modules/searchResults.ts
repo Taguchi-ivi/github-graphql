@@ -1,28 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+type Repository = {
+    id: string;
+    url: string;
+    name: string;
+    description: string;
+    owner: {
+        login: string;
+    }
+}
+
 const searchResults = createSlice({
     name: "searchResults",
     initialState: {
-        searchResult: [
-            {
-                id: '',
-                url: '',
-                name: '',
-                description: '',
-                createdAt: '',
-            }
-        ]
+        value: [] as Repository[]
     },
     reducers: {
+        resetSearchResult: (state) => {
+            state.value = []
+        },
         addSearchResult(state, { payload }) {
-            // state.searchResult = [...state.searchResult, payload]
-            state.searchResult.push(payload);
+            state.value.push(...payload);
         }
     }
 })
 
-const { addSearchResult } = searchResults.actions;
-
-export { addSearchResult };
+export const { resetSearchResult, addSearchResult } = searchResults.actions;
 export default searchResults.reducer
 

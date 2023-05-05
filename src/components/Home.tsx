@@ -14,29 +14,24 @@ import { useDispatch } from "react-redux";
 import { editSearchName } from "../store/modules/searchName"
 import { editCursor } from "../store/modules/cursor"
 import { editRepositoryCount } from '../store/modules/repositoryCount';
+import { resetSearchResult ,addSearchResult } from '../store/modules/searchResults';
 import { useSelector } from "react-redux"
 
-type Repository = {
-    id: string;
-    url: string;
-    name: string;
-    description: string;
-    createdAt: string;
-}
 
 const Home: React.FC = () => {
 
     const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
-    const [results, setResults] = useState<Repository[]>([])
     const [firstFlg, setFirstFlg] = useState<boolean>(true)
 
     const searchName = useSelector((state: any) => state.searchName)
     const cursor = useSelector((state: any) => state.cursor)
     const repositoryCount = useSelector((state: any) => state.repositoryCount)
+    const searchResults = useSelector((state: any) => state.searchResults.value)
     const dispatch = useDispatch();
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        dispatch(resetSearchResult())
         searchRepositories({variables: {
             after: null,
             query: searchName
@@ -44,10 +39,9 @@ const Home: React.FC = () => {
             .then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
-                    setResults(repos);
+                    dispatch(addSearchResult(repos))
                     setFirstFlg(false);
                     dispatch(editRepositoryCount(data.search.repositoryCount))
-                    // setCursor(data.search.pageInfo.endCursor)
                     dispatch(editCursor(data.search.pageInfo.endCursor))
                 }
             })
@@ -63,8 +57,7 @@ const Home: React.FC = () => {
             }).then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
-                    setResults([...results, ...repos]);
-                    // setCursor(data.search.pageInfo.endCursor)
+                    dispatch(addSearchResult(repos))
                     dispatch(editCursor(data.search.pageInfo.endCursor))
                 }
             })
@@ -95,12 +88,11 @@ const Home: React.FC = () => {
                     </form>
                     {loading && firstFlg && <Loading />}
                     {error && <p>Error : {error.message}</p>}
-                    {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repositoryCount}</Heading></Flex>}
+                    {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {searchResults.length}/{repositoryCount}</Heading></Flex>}
                     <Stack spacing='4'>
-                        {results && results.length > 0 && (
-                            <Box my="7" className="y-scroll">
-                                {results.map((repo: any, index) => (
-                                    // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
+                        {searchResults && searchResults.length > 0 && (
+                            <Box my="7" className="y-scroll" p={2}>
+                                {searchResults.map((repo: any, index: number) => (
                                     <Box key={index}>
                                         <Box p="3">
                                             <Flex>
