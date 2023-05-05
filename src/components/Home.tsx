@@ -13,6 +13,7 @@ import { RepositorySearchQuery } from '../query/SearchRepository';
 import { useDispatch } from "react-redux";
 import { editSearchName } from "../store/modules/searchName"
 import { editCursor } from "../store/modules/cursor"
+import { editRepositoryCount } from '../store/modules/repositoryCount';
 import { useSelector } from "react-redux"
 
 type Repository = {
@@ -25,14 +26,13 @@ type Repository = {
 
 const Home: React.FC = () => {
 
-    // const [cursor, setCursor] = useState<string | null>(null)
     const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
     const [results, setResults] = useState<Repository[]>([])
-    const [repoCount, setRepoCount] = useState(-1)
     const [firstFlg, setFirstFlg] = useState<boolean>(true)
 
     const searchName = useSelector((state: any) => state.searchName)
     const cursor = useSelector((state: any) => state.cursor)
+    const repositoryCount = useSelector((state: any) => state.repositoryCount)
     const dispatch = useDispatch();
 
     const search = (e: React.FormEvent<HTMLFormElement>) => {
@@ -43,10 +43,10 @@ const Home: React.FC = () => {
         }})
             .then(({data}) => {
                 if (data) {
-                    setRepoCount(data.search.repositoryCount)
                     const repos = data.search.edges.map((edge: any) => edge.node);
                     setResults(repos);
                     setFirstFlg(false);
+                    dispatch(editRepositoryCount(data.search.repositoryCount))
                     // setCursor(data.search.pageInfo.endCursor)
                     dispatch(editCursor(data.search.pageInfo.endCursor))
                 }
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
                     </form>
                     {loading && firstFlg && <Loading />}
                     {error && <p>Error : {error.message}</p>}
-                    {repoCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repoCount}</Heading></Flex>}
+                    {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repositoryCount}</Heading></Flex>}
                     <Stack spacing='4'>
                         {results && results.length > 0 && (
                             <Box my="7" className="y-scroll">
