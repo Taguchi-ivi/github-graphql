@@ -13,14 +13,17 @@ const searchHistory = createSlice({
     },
     reducers: {
         editSearchHistory(state, { payload }) {
-            if(state.value.length > 0) {
-                state.value = state.value.filter(item => item.name !== payload);
+            const str = payload.trim();
+            if (str !== '') {
+                if(state.value.length > 0) {
+                    state.value = state.value.filter(item => item.name !== payload);
+                }
+                const newArray = {
+                    id: uuidv4(),
+                    name: payload
+                }
+                state.value.unshift(newArray);
             }
-            const newArray = {
-                id: uuidv4(),
-                name: payload
-            }
-            state.value.unshift(newArray);
         }
     }
 })

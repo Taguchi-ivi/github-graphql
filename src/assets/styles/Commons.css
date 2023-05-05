@@ -1,7 +1,14 @@
 
-.y-scroll {
+.y-result-scroll {
     overflow-y: scroll;
 	height: 500px;
 	/* margin: 50px auto 20px;
 	width: 100%; */
+}
+
+.y-search-scroll {
+	overflow-y: scroll;
+	height: 80px;
+	border: 1px solid #ccc;
+	border-radius: 0 0 10px 10px;
 }
