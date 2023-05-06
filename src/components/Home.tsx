@@ -31,12 +31,12 @@ const Home: React.FC = () => {
     const searchHistory = useSelector((state: any) => state.searchHistory.value)
     const dispatch = useDispatch();
 
-    const defaultSearch = () => {
+    const defaultSearch = (searchItem: string = searchName) => {
         dispatch(resetSearchResult())
         dispatch(resetPageInfo())
-        dispatch(editSearchHistory(searchName))
+        dispatch(editSearchHistory(searchItem))
         searchRepositories({variables: {
-            query: searchName,
+            query: searchItem,
             after: null
         }})
             .then(({data}) => {
@@ -49,8 +49,6 @@ const Home: React.FC = () => {
             })
     }
 
-    // console.log(searchHistory)
-
     const search = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         defaultSearch()
@@ -61,15 +59,14 @@ const Home: React.FC = () => {
     }
 
     const onBlurFunc = () => {
-        setFocusFlg(false)
+        setTimeout(() => {
+            setFocusFlg(false);
+        }, 100);
     }
 
-    const historySearch = async(name: string) => {
-        console.log(name)
-        await dispatch(editSearchName(name))
-        console.log(searchName)
-        debugger
-        defaultSearch()
+    const historySearch = (name: string) => {
+        dispatch(editSearchName(name))
+        defaultSearch(name)
     }
 
     const loadMore = () => {
@@ -97,7 +94,6 @@ const Home: React.FC = () => {
                 <title>{componentName}</title>
             </Helmet>
             <br />
-            <Heading>{searchName}</Heading>
             <Card>
                 <CardBody>
                     <form onSubmit={search}>
@@ -112,46 +108,25 @@ const Home: React.FC = () => {
                                     onBlur={onBlurFunc}
                                     onChange={(e) => dispatch(editSearchName(e.target.value))}
                                 />
-                                {/* {focusFlg && searchHistory.length > 0 && (
-                                    <Box className="y-search-scroll" bg='blackalpha.400'>
-                                        {searchHistory.map((item: any) => (
-                                            <Box key={item.id}>
-                                                <Box p="3px">
-                                                    <Button
-                                                        onClick={() => {
-                                                            console.log("Button clicked");
-                                                            historySearch(item.name)
-                                                        }}
-                                                        colorScheme='teal' variant='ghost'
-                                                    >
-                                                        <Text fontSize='xs'>{item.name}</Text>
-                                                    </Button>
-                                                </Box>
-                                                <Divider />
-                                            </Box>
-                                        ))}
-                                    </Box>
-                                )} */}
-                                {searchHistory.length > 0 && (
+                                {focusFlg && searchHistory.length > 0 && (
                                     <Box className="y-search-scroll">
                                         {searchHistory.map((item: any) => (
-                                            <Box key={item.id}>
-                                                <Box p="3px">
-                                                    <Button
-                                                        onClick={() => {
-                                                            console.log("Button clicked");
-                                                            historySearch(item.name)
-                                                        }}
-                                                        colorScheme='teal' variant='ghost'
-                                                    >
-                                                        <Text fontSize='xs'>{item.name}</Text>
-                                                    </Button>
+                                            <Box
+                                                key={item.id}
+                                                cursor="pointer"
+                                                _hover={{ bg: "blackAlpha.300" }}
+                                                onClick={() => { historySearch(item.name) }}
+                                            >
+                                                <Box p="3">
+                                                    <Text fontSize="xs">
+                                                        {item.name}
+                                                    </Text>
                                                 </Box>
                                                 <Divider />
                                             </Box>
                                         ))}
                                     </Box>
-                                    )}
+                                )}
                             </Box>
                             <Button type="submit" ml="2">Search</Button>
                         </Flex>
