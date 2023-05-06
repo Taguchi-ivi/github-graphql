@@ -2,7 +2,7 @@ import React from 'react';
 import { useQuery} from '@apollo/client';
 import { useParams } from 'react-router-dom';
 import { Helmet } from "react-helmet-async";
-import Loading from './Loading'
+import Loading from '../components/Loading'
 import {
     Box, Button, Flex, Heading, Text,
     Card, CardBody, Stack, Divider

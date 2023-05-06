@@ -7,7 +7,7 @@ import {
     Box, Heading, Button, Input,
     Card, CardBody, Stack, Flex, Divider, Text
 } from '@chakra-ui/react';
-import Loading from './Loading'
+import Loading from '../components/Loading'
 import '../assets/styles/Commons.css'
 import { RepositorySearchQuery } from '../query/SearchRepository';
 import { useDispatch } from "react-redux";
