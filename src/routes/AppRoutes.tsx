@@ -1,6 +1,6 @@
-import Home from '../components/Home';
-import Issues from '../components/Issues';
-import ErrorPage from '../components/ErrorPage';
+import Home from '../page/Home';
+import Issues from '../page/Issues';
+import ErrorPage from '../page/ErrorPage';
 import { createBrowserRouter } from 'react-router-dom';
 
 export const router = createBrowserRouter([
