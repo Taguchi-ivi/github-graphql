@@ -10,53 +10,78 @@ import {
 import Loading from './Loading'
 import '../assets/styles/Commons.css'
 import { RepositorySearchQuery } from '../query/SearchRepository';
+import { useDispatch } from "react-redux";
+import { editSearchName } from "../store/modules/searchName"
+import { editPageInfo, resetPageInfo } from "../store/modules/pageInfo"
+import { editRepositoryCount } from '../store/modules/repositoryCount';
+import { resetSearchResult ,addSearchResult } from '../store/modules/searchResults';
+import { editSearchHistory } from '../store/modules/searchHistory';
+import { useSelector } from "react-redux"
 
-type Repository = {
-    id: string;
-    url: string;
-    name: string;
-    description: string;
-    createdAt: string;
-}
 
 const Home: React.FC = () => {
 
-    const [searchName, setSearchName] = useState("")
-    const [cursor, setCursor] = useState<string | null>(null)
-    const [searchRepositories, { loading, error, data }] = useLazyQuery(RepositorySearchQuery)
-    const [results, setResults] = useState<Repository[]>([])
-    const [repoCount, setRepoCount] = useState(-1)
-    const [firstFlg, setFirstFlg] = useState<boolean>(true)
+    const [searchRepositories, { loading, error }] = useLazyQuery(RepositorySearchQuery)
+    const [focusFlg, setFocusFlg] = useState<boolean>(false)
 
-    const search = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const searchName = useSelector((state: any) => state.searchName)
+    const pageInfo = useSelector((state: any) => state.pageInfo)
+    const repositoryCount = useSelector((state: any) => state.repositoryCount)
+    const searchResults = useSelector((state: any) => state.searchResults.value)
+    const searchHistory = useSelector((state: any) => state.searchHistory.value)
+    const dispatch = useDispatch();
+
+    const defaultSearch = (searchItem: string = searchName) => {
+        dispatch(resetSearchResult())
+        dispatch(resetPageInfo())
+        dispatch(editSearchHistory(searchItem))
         searchRepositories({variables: {
-            after: null,
-            query: searchName
+            query: searchItem,
+            after: null
         }})
             .then(({data}) => {
                 if (data) {
-                    setRepoCount(data.search.repositoryCount)
                     const repos = data.search.edges.map((edge: any) => edge.node);
-                    setResults(repos);
-                    setFirstFlg(false);
-                    setCursor(data.search.pageInfo.endCursor)
+                    dispatch(addSearchResult(repos))
+                    dispatch(editRepositoryCount(data.search.repositoryCount))
+                    dispatch(editPageInfo(data.search.pageInfo))
                 }
             })
     }
 
+    const search = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        defaultSearch()
+    }
+
+    const onFocusFunc = () => {
+        setFocusFlg(true)
+    }
+
+    const onBlurFunc = () => {
+        setTimeout(() => {
+            setFocusFlg(false);
+        }, 100);
+    }
+
+    const historySearch = (name: string) => {
+        dispatch(editSearchName(name))
+        defaultSearch(name)
+    }
+
     const loadMore = () => {
-        if (data && data.search.pageInfo.hasNextPage) {
+        if (searchResults && pageInfo && pageInfo.hasNextPage) {
             searchRepositories({
                 variables: {
                     query: searchName,
-                    after: cursor
+                    after: pageInfo.cursor
                 },
-            }).then(({data}) => {
+            })
+            .then(({data}) => {
                 if (data) {
                     const repos = data.search.edges.map((edge: any) => edge.node);
-                    setResults([...results, ...repos]);
-                    setCursor(data.search.pageInfo.endCursor)
+                    dispatch(addSearchResult(repos))
+                    dispatch(editPageInfo(data.search.pageInfo))
                 }
             })
         }
@@ -73,24 +98,46 @@ const Home: React.FC = () => {
                 <CardBody>
                     <form onSubmit={search}>
                         <Flex>
-                            <Input
-                                focusBorderColor='teal.500'
-                                placeholder='Search Repository'
-                                type="text"
-                                value={searchName}
-                                onChange={(e) => setSearchName(e.target.value)}
-                            />
+                            <Box w='80%'>
+                                <Input
+                                    focusBorderColor='teal.500'
+                                    placeholder='Search Repository'
+                                    type="text"
+                                    value={searchName}
+                                    onFocus={onFocusFunc}
+                                    onBlur={onBlurFunc}
+                                    onChange={(e) => dispatch(editSearchName(e.target.value))}
+                                />
+                                {focusFlg && searchHistory.length > 0 && (
+                                    <Box className="y-search-scroll">
+                                        {searchHistory.map((item: any) => (
+                                            <Box
+                                                key={item.id}
+                                                cursor="pointer"
+                                                _hover={{ bg: "blackAlpha.300" }}
+                                                onClick={() => { historySearch(item.name) }}
+                                            >
+                                                <Box p="3">
+                                                    <Text fontSize="xs">
+                                                        {item.name}
+                                                    </Text>
+                                                </Box>
+                                                <Divider />
+                                            </Box>
+                                        ))}
+                                    </Box>
+                                )}
+                            </Box>
                             <Button type="submit" ml="2">Search</Button>
                         </Flex>
                     </form>
-                    {loading && firstFlg && <Loading />}
+                    {loading && pageInfo.firstFlg && <Loading />}
                     {error && <p>Error : {error.message}</p>}
-                    {repoCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {results.length}/{repoCount}</Heading></Flex>}
+                    {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {searchResults.length}/{repositoryCount}</Heading></Flex>}
                     <Stack spacing='4'>
-                        {results && results.length > 0 && (
-                            <Box my="7" className="y-scroll">
-                                {results.map((repo: any, index) => (
-                                    // <li key={repo.id}>{repo.owner.login}/{repo.name}</li>
+                        {searchResults && searchResults.length > 0 && (
+                            <Box my="7" className="y-result-scroll" p={2}>
+                                {searchResults.map((repo: any, index: number) => (
                                     <Box key={index}>
                                         <Box p="3">
                                             <Flex>
@@ -114,8 +161,8 @@ const Home: React.FC = () => {
                                 ))}
                             </Box>
                         )}
-                        {loading && !firstFlg && <Loading />}
-                        {data && data.search.pageInfo.hasNextPage && (
+                        {loading && !pageInfo.firstFlg && <Loading />}
+                        {searchResults && pageInfo && pageInfo.hasNextPage && (
                             <Box>
                                 <Button
                                     width='100%'
