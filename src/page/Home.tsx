@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { useLazyQuery} from '@apollo/client';
-import { Helmet } from "react-helmet-async";
-import { Link } from 'react-router-dom';
-import { FaGithub } from 'react-icons/fa';
 import {
     Box, Heading, Button, Input,
-    Card, CardBody, Stack, Flex, Divider, Text
+    Card, CardBody, Stack, Flex
 } from '@chakra-ui/react';
-import Loading from '../components/Loading'
-import '../assets/styles/Commons.css'
 import { RepositorySearchQuery } from '../query/SearchRepository';
-import { useDispatch } from "react-redux";
 import { editSearchName } from "../store/modules/searchName"
 import { editPageInfo, resetPageInfo } from "../store/modules/pageInfo"
 import { editRepositoryCount } from '../store/modules/repositoryCount';
 import { resetSearchResult ,addSearchResult } from '../store/modules/searchResults';
 import { editSearchHistory } from '../store/modules/searchHistory';
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
+import PageTitle from '../components/PageTitle'
+import Loading from '../components/Loading'
+import RepositoryResults from '../components/RepositoryResults'
+import Suggestion from '../components/Suggestion'
 
 
 const Home: React.FC = () => {
@@ -64,11 +62,6 @@ const Home: React.FC = () => {
         }, 100);
     }
 
-    const historySearch = (name: string) => {
-        dispatch(editSearchName(name))
-        defaultSearch(name)
-    }
-
     const loadMore = () => {
         if (searchResults && pageInfo && pageInfo.hasNextPage) {
             searchRepositories({
@@ -87,13 +80,9 @@ const Home: React.FC = () => {
         }
     }
 
-    const componentName = "Repository Search"
     return (
         <Box w='80%' p={4} mx="auto" >
-            <Helmet>
-                <title>{componentName}</title>
-            </Helmet>
-            <br />
+            <PageTitle pageName="Repository Search" />
             <Card>
                 <CardBody>
                     <form onSubmit={search}>
@@ -109,23 +98,7 @@ const Home: React.FC = () => {
                                     onChange={(e) => dispatch(editSearchName(e.target.value))}
                                 />
                                 {focusFlg && searchHistory.length > 0 && (
-                                    <Box className="y-search-scroll">
-                                        {searchHistory.map((item: any) => (
-                                            <Box
-                                                key={item.id}
-                                                cursor="pointer"
-                                                _hover={{ bg: "blackAlpha.300" }}
-                                                onClick={() => { historySearch(item.name) }}
-                                            >
-                                                <Box p="3">
-                                                    <Text fontSize="xs">
-                                                        {item.name}
-                                                    </Text>
-                                                </Box>
-                                                <Divider />
-                                            </Box>
-                                        ))}
-                                    </Box>
+                                    <Suggestion onFunc={defaultSearch}/>
                                 )}
                             </Box>
                             <Button type="submit" ml="2">Search</Button>
@@ -135,32 +108,7 @@ const Home: React.FC = () => {
                     {error && <p>Error : {error.message}</p>}
                     {repositoryCount > -1 && <Flex justify="end"><Heading size="sm" mt="5">Repository Count: {searchResults.length}/{repositoryCount}</Heading></Flex>}
                     <Stack spacing='4'>
-                        {searchResults && searchResults.length > 0 && (
-                            <Box my="7" className="y-result-scroll" p={2}>
-                                {searchResults.map((repo: any, index: number) => (
-                                    <Box key={index}>
-                                        <Box p="3">
-                                            <Flex>
-                                                <Link to={`/issues/${repo.id}`}>
-                                                    <Heading size='sm' mr="5">
-                                                        {repo.owner.login}/{repo.name}
-                                                    </Heading>
-                                                </Link>
-                                                <a href={repo.url} target="_blank" rel="noopener noreferrer">
-                                                    <FaGithub size="1rem" />
-                                                </a>
-                                            </Flex>
-                                            <Link to={`/issues/${repo.id}`}>
-                                                <Text fontSize='xs' color="gray.400">
-                                                    {repo.description}
-                                                </Text>
-                                            </Link>
-                                        </Box>
-                                        <Divider />
-                                    </Box>
-                                ))}
-                            </Box>
-                        )}
+                        <RepositoryResults />
                         {loading && !pageInfo.firstFlg && <Loading />}
                         {searchResults && pageInfo && pageInfo.hasNextPage && (
                             <Box>

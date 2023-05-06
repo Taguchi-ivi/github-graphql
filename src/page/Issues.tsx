@@ -1,18 +1,16 @@
 import React from 'react';
 import { useQuery} from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import { Helmet } from "react-helmet-async";
-import Loading from '../components/Loading'
 import {
     Box, Button, Flex, Heading, Text,
     Card, CardBody, Stack, Divider
 } from '@chakra-ui/react';
-// import { FiExternalLink } from "react-icons/fi";
 import { FaGithub } from 'react-icons/fa';
 import { GET_ISSUES } from '../query/SearchIssues';
+import Loading from '../components/Loading'
+import PageTitle from '../components/PageTitle'
 
 const Issues: React.FC = () => {
-    const componentName = "Issues Search"
     const params = useParams();
     const id = params.id
     const { loading, error, data } = useQuery(GET_ISSUES, {
@@ -30,9 +28,7 @@ const Issues: React.FC = () => {
 
     return (
         <>
-            <Helmet>
-                <title>{componentName}</title>
-            </Helmet>
+            <PageTitle pageName="Issues Search" />
             {!id && (<h3>正しいURLを指定してください</h3>)}
             {data && (
                 <Card>
