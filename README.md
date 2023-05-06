@@ -38,6 +38,54 @@
 
 <br />
 
+# 手順
+このアプリケーションの動作確認を行う手順を記載します。 <br />
+環境構築(node)やGitHubのパーソナルアクセストークンの説明は省きます。
+
+<br />
+
+## ①当レポジトリをclone
+
+```
+git clone xxxxxxx
+```
+<br />
+
+## ②cdコマンドを用いてレポジトリを移動
+
+```
+cd github-graphql
+```
+<br />
+
+## ③.envファイルをルートディレクトリに作成し下記を記載
+
+```
+// .envファイル作成
+touch .env
+
+// 作成した.envファイルに下記を記載
+REACT_APP_GITHUB_TOKEN="githubのパーソナルアクセストークン"
+```
+
+<br />
+
+## ④modulesをインストール
+
+```
+npm install
+```
+
+<br />
+
+## ⑤画面表示
+
+```
+npm start
+```
+
+
+
 <!--
 component => 大文字スタート
 function Example() {
